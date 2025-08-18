@@ -6,8 +6,8 @@
   <title>Assignments | Giripahana.lk</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Extra styles for subject lists */
-    .subject-list {
+    /* Subject & Assignment lists */
+    .subject-list, .assignment-list {
       display: none;
       margin-top: 15px;
       padding: 15px;
@@ -17,7 +17,7 @@
       text-align: center;
     }
 
-    .subject-list a {
+    .subject-list a, .back-btn {
       display: inline-block;
       margin: 8px;
       padding: 10px 18px;
@@ -29,9 +29,15 @@
       transition: background 0.3s ease, transform 0.2s ease;
     }
 
-    .subject-list a:hover {
+    .subject-list a:hover, .back-btn:hover {
       background: #14566b;
       transform: scale(1.05);
+    }
+
+    .assignment-list .card {
+      margin: 15px auto;
+      max-width: 700px;
+      text-align: left;
     }
   </style>
 </head>
@@ -66,22 +72,22 @@
 
     <!-- Grade Navigation -->
     <div class="body-nav">
-      <a href="javascript:void(0)" onclick="toggleSubjects('grade6')">Grade 6</a>
-      <a href="javascript:void(0)" onclick="toggleSubjects('grade7')">Grade 7</a>
-      <a href="javascript:void(0)" onclick="toggleSubjects('grade8')">Grade 8</a>
-      <a href="javascript:void(0)" onclick="toggleSubjects('grade9')">Grade 9</a>
-      <a href="javascript:void(0)" onclick="toggleSubjects('grade10')">Grade 10</a>
-      <a href="javascript:void(0)" onclick="toggleSubjects('grade11')">Grade 11</a>
-      <a href="javascript:void(0)" onclick="toggleSubjects('grade12')">Grade 12</a>
-      <a href="javascript:void(0)" onclick="toggleSubjects('grade13')">Grade 13</a>
+      <a href="javascript:void(0)" onclick="showSubjects('grade6')">Grade 6</a>
+      <a href="javascript:void(0)" onclick="showSubjects('grade7')">Grade 7</a>
+      <a href="javascript:void(0)" onclick="showSubjects('grade8')">Grade 8</a>
+      <a href="javascript:void(0)" onclick="showSubjects('grade9')">Grade 9</a>
+      <a href="javascript:void(0)" onclick="showSubjects('grade10')">Grade 10</a>
+      <a href="javascript:void(0)" onclick="showSubjects('grade11')">Grade 11</a>
+      <a href="javascript:void(0)" onclick="showSubjects('grade12')">Grade 12</a>
+      <a href="javascript:void(0)" onclick="showSubjects('grade13')">Grade 13</a>
     </div>
 
-    <!-- Subject Lists -->
+    <!-- Example: Grade 6 Subjects -->
     <div id="grade6" class="subject-list">
       <h2>Grade 6 Subjects</h2>
-      <a href="#">Mathematics</a>
-      <a href="#">Science</a>
-      <a href="#">English</a>
+      <a href="javascript:void(0)" onclick="showAssignments('math6')">Mathematics</a>
+      <a href="javascript:void(0)" onclick="showAssignments('science6')">Science</a>
+      <a href="javascript:void(0)" onclick="showAssignments('english6')">English</a>
       <a href="#">History</a>
       <a href="#">Geography</a>
       <a href="#">IT</a>
@@ -90,95 +96,64 @@
       <a href="#">Sinhala</a>
     </div>
 
-    <div id="grade7" class="subject-list">
-      <h2>Grade 7 Subjects</h2>
-      <a href="#">Mathematics</a>
-      <a href="#">Science</a>
-      <a href="#">English</a>
-      <a href="#">History</a>
-      <a href="#">Geography</a>
-      <a href="#">IT</a>
-      <a href="#">Health</a>
-      <a href="#">Art</a>
-      <a href="#">Sinhala</a>
+    <!-- Example Assignments for Grade 6 Math -->
+    <div id="math6" class="assignment-list">
+      <h2>📘 Grade 6 – Mathematics Assignments</h2>
+
+      <div class="card">
+        <h3>Algebra Worksheet</h3>
+        <p><strong>Due Date:</strong> 2025-08-20</p>
+        <p><strong>Description:</strong> Solve basic algebraic equations.</p>
+        <p><strong>Resources:</strong> <a href="algebra-worksheet.pdf" download>Download PDF</a></p>
+      </div>
+
+      <div class="card">
+        <h3>Geometry – Angles</h3>
+        <p><strong>Due Date:</strong> 2025-08-28</p>
+        <p><strong>Description:</strong> Identify and label different types of angles.</p>
+        <p><strong>Resources:</strong> <a href="geometry.pdf" download>Download PDF</a></p>
+      </div>
+
+      <a href="javascript:void(0)" class="back-btn" onclick="backToSubjects('grade6')">⬅ Back to Subjects</a>
     </div>
 
-    <div id="grade8" class="subject-list">
-      <h2>Grade 8 Subjects</h2>
-      <a href="#">Mathematics</a>
-      <a href="#">Science</a>
-      <a href="#">English</a>
-      <a href="#">History</a>
-      <a href="#">Geography</a>
-      <a href="#">IT</a>
-      <a href="#">Health</a>
-      <a href="#">Art</a>
-      <a href="#">Sinhala</a>
+    <!-- Example Assignments for Grade 6 Science -->
+    <div id="science6" class="assignment-list">
+      <h2>🔬 Grade 6 – Science Assignments</h2>
+
+      <div class="card">
+        <h3>Plant Cells</h3>
+        <p><strong>Due Date:</strong> 2025-08-22</p>
+        <p><strong>Description:</strong> Draw and label plant cell parts.</p>
+        <p><strong>Resources:</strong> <a href="plant-cells.pdf" download>Download PDF</a></p>
+      </div>
+
+      <div class="card">
+        <h3>Forces and Motion</h3>
+        <p><strong>Due Date:</strong> 2025-08-30</p>
+        <p><strong>Description:</strong> Write notes on push and pull forces with examples.</p>
+      </div>
+
+      <a href="javascript:void(0)" class="back-btn" onclick="backToSubjects('grade6')">⬅ Back to Subjects</a>
     </div>
 
-    <div id="grade9" class="subject-list">
-      <h2>Grade 9 Subjects</h2>
-      <a href="#">Mathematics</a>
-      <a href="#">Science</a>
-      <a href="#">English</a>
-      <a href="#">History</a>
-      <a href="#">Geography</a>
-      <a href="#">IT</a>
-      <a href="#">Health</a>
-      <a href="#">Art</a>
-      <a href="#">Sinhala</a>
-    </div>
+    <!-- Example Assignments for Grade 6 English -->
+    <div id="english6" class="assignment-list">
+      <h2>📖 Grade 6 – English Assignments</h2>
 
-    <div id="grade10" class="subject-list">
-      <h2>Grade 10 Subjects</h2>
-      <a href="#">Mathematics</a>
-      <a href="#">Science</a>
-      <a href="#">English</a>
-      <a href="#">History</a>
-      <a href="#">Geography</a>
-      <a href="#">IT</a>
-      <a href="#">Health</a>
-      <a href="#">Art</a>
-      <a href="#">Sinhala</a>
-    </div>
+      <div class="card">
+        <h3>Essay Writing</h3>
+        <p><strong>Due Date:</strong> 2025-08-25</p>
+        <p><strong>Description:</strong> Write an essay on "My School".</p>
+      </div>
 
-    <div id="grade11" class="subject-list">
-      <h2>Grade 11 Subjects</h2>
-      <a href="#">Mathematics</a>
-      <a href="#">Science</a>
-      <a href="#">English</a>
-      <a href="#">History</a>
-      <a href="#">Geography</a>
-      <a href="#">IT</a>
-      <a href="#">Health</a>
-      <a href="#">Art</a>
-      <a href="#">Sinhala</a>
-    </div>
+      <div class="card">
+        <h3>Reading Comprehension</h3>
+        <p><strong>Due Date:</strong> 2025-09-01</p>
+        <p><strong>Description:</strong> Complete comprehension questions from the textbook.</p>
+      </div>
 
-    <div id="grade12" class="subject-list">
-      <h2>Grade 12 Subjects</h2>
-      <a href="#">Mathematics</a>
-      <a href="#">Science</a>
-      <a href="#">English</a>
-      <a href="#">History</a>
-      <a href="#">Geography</a>
-      <a href="#">IT</a>
-      <a href="#">Health</a>
-      <a href="#">Art</a>
-      <a href="#">Sinhala</a>
-    </div>
-
-    <div id="grade13" class="subject-list">
-      <h2>Grade 13 Subjects</h2>
-      <a href="#">Mathematics</a>
-      <a href="#">Science</a>
-      <a href="#">English</a>
-      <a href="#">History</a>
-      <a href="#">Geography</a>
-      <a href="#">IT</a>
-      <a href="#">Health</a>
-      <a href="#">Art</a>
-      <a href="#">Sinhala</a>
+      <a href="javascript:void(0)" class="back-btn" onclick="backToSubjects('grade6')">⬅ Back to Subjects</a>
     </div>
 
   </main>
@@ -210,17 +185,30 @@
     <center><p>© 2025 Giripahana Website By Silent Vipers | All Rights Reserved</p></center>
   </footer>
 
-  <!-- Script for toggling subjects -->
+  <!-- Script -->
   <script>
-    function toggleSubjects(gradeId) {
-      // hide all subject lists
-      document.querySelectorAll('.subject-list').forEach(div => {
+    function showSubjects(gradeId) {
+      document.querySelectorAll('.subject-list, .assignment-list').forEach(div => {
         div.style.display = "none";
       });
-      // show the clicked one
       document.getElementById(gradeId).style.display = "block";
-      // scroll to it
-      document.getElementById(gradeId).scrollIntoView({behavior: "smooth"});
+      document.getElementById(gradeId).scrollIntoView({behavior:"smooth"});
+    }
+
+    function showAssignments(subjectId) {
+      document.querySelectorAll('.assignment-list').forEach(div => {
+        div.style.display = "none";
+      });
+      document.getElementById(subjectId).style.display = "block";
+      document.getElementById(subjectId).scrollIntoView({behavior:"smooth"});
+    }
+
+    function backToSubjects(gradeId) {
+      document.querySelectorAll('.assignment-list').forEach(div => {
+        div.style.display = "none";
+      });
+      document.getElementById(gradeId).style.display = "block";
+      document.getElementById(gradeId).scrollIntoView({behavior:"smooth"});
     }
   </script>
 
