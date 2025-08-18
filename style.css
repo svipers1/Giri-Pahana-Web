@@ -1,7 +1,7 @@
 /* General Body */
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: url(1.jpeg) no-repeat center/cover fixed;
+    background: url('1.jpeg') no-repeat center/cover fixed;
     margin: 0;
     padding: 0;
     animation: fadeIn 1.5s ease-in-out;
@@ -473,4 +473,5 @@ form button:hover {
         padding: 15px;
     }
 }
+
 
