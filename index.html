@@ -61,6 +61,22 @@ We may be young, but with passion and teamwork, Silent Vipers is ready to strike
     </div>
 </main>
 
+	<div class="chatbot-icon" id="chatbotToggle">
+    <i class="fas fa-comments"></i>
+  </div>
+
+  <!-- Chatbot Panel -->
+  <div class="chatbot-panel" id="chatbotPanel">
+    <div class="chatbot-header">
+      <span>🤖 Giripahana AI Assistant</span>
+      <button id="closeChatbot"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatbot-body" id="chatBox"></div>
+    <div class="chatbot-input">
+      <input type="text" id="userInput" placeholder="Type your message...">
+      <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
 
 <footer>
 
@@ -95,5 +111,57 @@ We may be young, but with passion and teamwork, Silent Vipers is ready to strike
 </footer>
 
 </body>
+<script>
+    const chatbotToggle = document.getElementById("chatbotToggle");
+    const chatbotPanel = document.getElementById("chatbotPanel");
+    const closeChatbot = document.getElementById("closeChatbot");
+    const sendMessageBtn = document.getElementById("sendMessage");
+    const chatBox = document.getElementById("chatBox");
+    const userInput = document.getElementById("userInput");
+
+    // Open chatbot
+    chatbotToggle.addEventListener("click", () => {
+      chatbotPanel.style.display = "flex";
+      chatbotToggle.style.display = "none";
+    });
+
+    // Close chatbot
+    closeChatbot.addEventListener("click", () => {
+      chatbotPanel.style.display = "none";
+      chatbotToggle.style.display = "flex";
+    });
+
+    // Send message
+    sendMessageBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    function sendMessage() {
+      let message = userInput.value.trim();
+      if (message === "") return;
+
+      // Show user message
+      let userMsg = document.createElement("div");
+      userMsg.className = "chat-message user-message";
+      userMsg.innerText = message;
+      chatBox.appendChild(userMsg);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+      userInput.value = "";
+
+      // Fake AI Response
+      setTimeout(() => {
+        let botMsg = document.createElement("div");
+        botMsg.className = "chat-message bot-message";
+        botMsg.innerText = "🤖 I'm AI Assistant. I will help you soon...";
+        chatBox.appendChild(botMsg);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 1000);
+    }
+  </script>
+	
 </html>
+
 
