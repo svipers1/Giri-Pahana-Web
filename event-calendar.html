@@ -2,41 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Event Calendar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Calendar | Giripahana.lk</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <style>
-    /* Extra Calendar Styling (works with your CSS theme) */
+    /* Calendar styles (blend with style.css) */
+    .calendar-container {
+      max-width: 900px;
+      margin: 20px auto;
+    }
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .calendar-header h2 {
+      margin: 0;
+      color: #005b96;
+    }
+    .calendar-nav button {
+      background: linear-gradient(90deg, #4da6ff, #0073e6);
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      margin: 0 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .calendar-nav button:hover {
+      background: linear-gradient(90deg, #0073e6, #004d99);
+      transform: scale(1.05);
+    }
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 8px;
-      max-width: 700px;
-      margin: 20px auto;
+    }
+    .day, .day-name {
+      background: rgba(255,255,255,0.9);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-weight: bold;
     }
     .day {
-      background: rgba(255,255,255,0.85);
-      padding: 18px;
-      border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      font-weight: bold;
     }
     .day:hover {
       background: #4da6ff;
       color: white;
       transform: translateY(-3px);
     }
+    .today {
+      border: 2px solid #0073e6;
+    }
     #messages {
       margin-top: 20px;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
+      text-align: left;
     }
     #messages p {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255,255,255,0.95);
       border-left: 5px solid #0073e6;
       padding: 10px;
       border-radius: 8px;
@@ -45,26 +74,45 @@
   </style>
 </head>
 <body>
+
   <!-- Header -->
   <header>
-    <img src="logo.png" class="logo" alt="Logo">
+    <img src="12.png" class="logo" alt="Giripahana Logo">
     <div class="header-text">
-      <h1>📅 Event Calendar</h1>
-      <p>Click a date, leave a message, share with everyone</p>
+      <h1>Giripahana.lk</h1>
+      <p>ඔබේ දැනුමේ මාවත</p>
     </div>
   </header>
 
   <!-- Navigation -->
   <nav>
-    <a href="#">Home</a>
-    <a href="#">Calendar</a>
-    <a href="#">About</a>
+    <div class="navigation">
+      <a href="index.html">Home</a>
+      <a href="marksheet.html">Mark Sheet</a>
+      <a href="assignment.html">Assignments</a>
+      <a href="event-calendar.html" class="active">Event Calendar</a>
+      <a href="timetable.html">Timetable</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="logout.html">Logout</a>
+    </div>
   </nav>
 
-  <!-- Main Content -->
+  <!-- Main -->
   <main>
-    <h2 class="page-title">This Month's Calendar</h2>
-    <div id="calendar" class="calendar card"></div>
+    <h1 class="page-title">📅 Event Calendar</h1>
+    <div class="calendar-container card">
+      <div class="calendar-header">
+        <div class="calendar-nav">
+          <button onclick="prevMonth()">⬅ Prev</button>
+        </div>
+        <h2 id="monthYear"></h2>
+        <div class="calendar-nav">
+          <button onclick="nextMonth()">Next ➡</button>
+        </div>
+      </div>
+      <div class="calendar" id="calendar"></div>
+    </div>
 
     <div class="card">
       <h3 id="selected-date">Select a date</h3>
@@ -81,54 +129,104 @@
   <footer>
     <div class="footer-container">
       <div class="footer-section">
-        <h2>Contact</h2>
-        <p>Email: info@example.com</p>
+        <h2>Follow Us On</h2>
+        <a href="#">Facebook</a>
+        <a href="#">Instagram</a>
+        <a href="#">Twitter</a>
       </div>
       <div class="footer-section">
-        <h2>Follow Us</h2>
-        <a href="#">Facebook</a> | <a href="#">Twitter</a>
+        <h2>Subscribe</h2>
+        <a href="#" class="subscribe-btn">Subscribe on YouTube</a>
+      </div>
+      <div class="footer-section">
+        <h2>Contact Us</h2>
+        <p>info@giripahana.lk</p>
+        <p>+94 77 123 4567</p>
       </div>
     </div>
-    <div class="footer-bottom">© 2025 Event Calendar</div>
+    <div class="footer-bottom">
+      © 2025 Giripahana Website By Silent Vipers | All Rights Reserved
+    </div>
   </footer>
 
+  <!-- JavaScript -->
   <script>
-    // 🔥 Firebase Setup (replace with your Firebase config)
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const calendar = document.getElementById("calendar");
-    const selectedDateElem = document.getElementById("selected-date");
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    let selectedDate = null;
+    const calendarEl = document.getElementById("calendar");
+    const monthYearEl = document.getElementById("monthYear");
+    const selectedDateEl = document.getElementById("selected-date");
     const messageInput = document.getElementById("message");
     const messagesDiv = document.getElementById("messages");
-    let selectedDate = null;
+    const savedMessages = {}; // Local storage for now
 
-    // Generate current month calendar
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const monthNames = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
+    const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-    for (let d = 1; d <= daysInMonth; d++) {
-      const div = document.createElement("div");
-      div.className = "day";
-      div.textContent = d;
-      div.onclick = () => selectDate(d);
-      calendar.appendChild(div);
+    function renderCalendar() {
+      calendarEl.innerHTML = "";
+      monthYearEl.textContent = monthNames[currentMonth] + " " + currentYear;
+
+      // Weekday headers
+      for (let d of dayNames) {
+        const div = document.createElement("div");
+        div.className = "day-name";
+        div.textContent = d;
+        calendarEl.appendChild(div);
+      }
+
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+      // Blank days before 1st
+      for (let i = 0; i < firstDay; i++) {
+        const div = document.createElement("div");
+        div.className = "day";
+        div.style.visibility = "hidden";
+        calendarEl.appendChild(div);
+      }
+
+      // Dates
+      for (let d = 1; d <= daysInMonth; d++) {
+        const div = document.createElement("div");
+        div.className = "day";
+        div.textContent = d;
+
+        let today = new Date();
+        if (d === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+          div.classList.add("today");
+        }
+
+        div.onclick = () => selectDate(d);
+        calendarEl.appendChild(div);
+      }
+    }
+
+    function prevMonth() {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
     }
 
     function selectDate(day) {
-      selectedDate = `${year}-${month+1}-${day}`;
-      selectedDateElem.textContent = "Selected Date: " + selectedDate;
+      selectedDate = `${currentYear}-${currentMonth+1}-${day}`;
+      selectedDateEl.textContent = "Selected Date: " + selectedDate;
       loadMessages();
     }
 
@@ -136,26 +234,26 @@
       if (!selectedDate) { alert("Please select a date"); return; }
       const msg = messageInput.value.trim();
       if (!msg) return;
-      db.ref("calendar/" + selectedDate).push(msg);
+      if (!savedMessages[selectedDate]) savedMessages[selectedDate] = [];
+      savedMessages[selectedDate].push(msg);
       messageInput.value = "";
       loadMessages();
     }
 
     function loadMessages() {
-      if (!selectedDate) return;
-      db.ref("calendar/" + selectedDate).once("value", snapshot => {
-        messagesDiv.innerHTML = "<h3>Messages for " + selectedDate + ":</h3>";
-        if (snapshot.exists()) {
-          snapshot.forEach(child => {
-            const p = document.createElement("p");
-            p.textContent = "📝 " + child.val();
-            messagesDiv.appendChild(p);
-          });
-        } else {
-          messagesDiv.innerHTML += "<p>No messages yet.</p>";
-        }
-      });
+      messagesDiv.innerHTML = "<h3>Messages for " + selectedDate + ":</h3>";
+      if (savedMessages[selectedDate]) {
+        savedMessages[selectedDate].forEach(m => {
+          const p = document.createElement("p");
+          p.textContent = "📝 " + m;
+          messagesDiv.appendChild(p);
+        });
+      } else {
+        messagesDiv.innerHTML += "<p>No messages yet.</p>";
+      }
     }
+
+    renderCalendar();
   </script>
 </body>
 </html>
