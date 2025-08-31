@@ -12,11 +12,10 @@
     .calendar-nav button { background: linear-gradient(90deg, #4da6ff, #0073e6); border: none; color: white; padding: 8px 15px; margin: 0 5px; border-radius: 6px; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
     .calendar-nav button:hover { background: linear-gradient(90deg, #0073e6, #004d99); transform: scale(1.05); }
     .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-    .day, .day-name { background: rgba(255,255,255,0.9); padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-weight: bold; position: relative; }
+    .day, .day-name { background: rgba(255,255,255,0.9); padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-weight: bold; }
     .day { cursor: pointer; transition: all 0.3s ease; }
     .day:hover { background: #4da6ff; color: white; transform: translateY(-3px); }
     .today { border: 2px solid #0073e6; }
-    .has-event::after { content: "•"; color: red; font-size: 20px; position: absolute; bottom: 5px; right: 8px; }
     #messages { margin-top: 20px; text-align: left; }
     #messages p { background: rgba(255,255,255,0.95); border-left: 5px solid #0073e6; padding: 10px; border-radius: 8px; margin: 6px 0; }
   </style>
@@ -112,52 +111,78 @@
     function renderCalendar() {
       calendarEl.innerHTML = "";
       monthYearEl.textContent = monthNames[currentMonth] + " " + currentYear;
+
       for (let d of dayNames) {
         const div = document.createElement("div");
         div.className = "day-name";
         div.textContent = d;
         calendarEl.appendChild(div);
       }
+
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
       for (let i = 0; i < firstDay; i++) {
         const div = document.createElement("div");
         div.className = "day";
         div.style.visibility = "hidden";
         calendarEl.appendChild(div);
       }
+
       for (let d = 1; d <= daysInMonth; d++) {
         const div = document.createElement("div");
         div.className = "day";
         div.textContent = d;
+
         let today = new Date();
         if (d === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
           div.classList.add("today");
         }
+
         div.onclick = () => selectDate(d);
         calendarEl.appendChild(div);
       }
-      highlightEventDays();
     }
 
-    function prevMonth() { currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); }
-    function nextMonth() { currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } currentYear++; renderCalendar(); }
-    function selectDate(day) { selectedDate = `${currentYear}-${currentMonth+1}-${day}`; selectedDateEl.textContent = "Selected Date: " + selectedDate; loadMessages(); }
+    function prevMonth() {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
+    }
+
+    function selectDate(day) {
+      selectedDate = `${currentYear}-${currentMonth+1}-${day}`;
+      selectedDateEl.textContent = "Selected Date: " + selectedDate;
+      loadMessages();
+    }
+
     renderCalendar();
   </script>
 
   <!-- Firebase Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDgSuzDCXWBL537o23Cwb0l3BWDIfyND7Q",
-      authDomain: "giripahana-calender.firebaseapp.com",
-      projectId: "giripahana-calender",
-      storageBucket: "giripahana-calender.firebasestorage.app",
-      messagingSenderId: "807294583980",
-      appId: "1:807294583980:web:5ed8c814e8bee540ef4b09"
+      apiKey: "AIzaSyBReLWauEoJjaRBxD_G92zOsZxlLglUPKs",
+      authDomain: "giripahana-calendar.firebaseapp.com",
+      projectId: "giripahana-calendar",
+      storageBucket: "giripahana-calendar.firebasestorage.app",
+      messagingSenderId: "447823341242",
+      appId: "1:447823341242:web:cfd728818a3f8f507a0483"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -167,14 +192,25 @@
       if (!selectedDate) { alert("Please select a date"); return; }
       const msg = messageInput.value.trim();
       if (!msg) return;
-      await addDoc(collection(db, "events"), { date: selectedDate, message: msg, timestamp: new Date() });
+
+      await addDoc(collection(db, "events"), {
+        date: selectedDate,
+        message: msg,
+        timestamp: new Date()
+      });
+
       messageInput.value = "";
-      highlightEventDays();
     }
 
     window.loadMessages = function() {
       messagesDiv.innerHTML = "<h3>Messages for " + selectedDate + ":</h3>";
-      const q = query(collection(db, "events"), where("date", "==", selectedDate), orderBy("timestamp", "asc"));
+
+      const q = query(
+        collection(db, "events"),
+        where("date", "==", selectedDate),
+        orderBy("timestamp", "asc")
+      );
+
       onSnapshot(q, (snapshot) => {
         messagesDiv.innerHTML = "<h3>Messages for " + selectedDate + ":</h3>";
         if (snapshot.empty) {
@@ -188,27 +224,6 @@
         }
       });
     }
-
-    async function highlightEventDays() {
-      const q = query(collection(db, "events"), where("date", ">=", `${currentYear}-${currentMonth+1}-1`));
-      const snapshot = await getDocs(q);
-      const daysWithEvents = new Set();
-      snapshot.forEach(doc => {
-        const date = doc.data().date;
-        const parts = date.split("-");
-        if (parseInt(parts[0]) === currentYear && parseInt(parts[1]) === currentMonth + 1) {
-          daysWithEvents.add(parseInt(parts[2]));
-        }
-      });
-      document.querySelectorAll(".day").forEach(dayEl => {
-        const dayNum = parseInt(dayEl.textContent);
-        if (daysWithEvents.has(dayNum)) {
-          dayEl.classList.add("has-event");
-        }
-      });
-    }
-
-    highlightEventDays();
   </script>
 </body>
 </html>
