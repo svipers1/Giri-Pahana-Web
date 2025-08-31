@@ -6,71 +6,18 @@
   <title>Event Calendar | Giripahana.lk</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Calendar styles (blend with style.css) */
-    .calendar-container {
-      max-width: 900px;
-      margin: 20px auto;
-    }
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .calendar-header h2 {
-      margin: 0;
-      color: #005b96;
-    }
-    .calendar-nav button {
-      background: linear-gradient(90deg, #4da6ff, #0073e6);
-      border: none;
-      color: white;
-      padding: 8px 15px;
-      margin: 0 5px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-    .calendar-nav button:hover {
-      background: linear-gradient(90deg, #0073e6, #004d99);
-      transform: scale(1.05);
-    }
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-    .day, .day-name {
-      background: rgba(255,255,255,0.9);
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      font-weight: bold;
-    }
-    .day {
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .day:hover {
-      background: #4da6ff;
-      color: white;
-      transform: translateY(-3px);
-    }
-    .today {
-      border: 2px solid #0073e6;
-    }
-    #messages {
-      margin-top: 20px;
-      text-align: left;
-    }
-    #messages p {
-      background: rgba(255,255,255,0.95);
-      border-left: 5px solid #0073e6;
-      padding: 10px;
-      border-radius: 8px;
-      margin: 6px 0;
-    }
+    .calendar-container { max-width: 900px; margin: 20px auto; }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .calendar-header h2 { margin: 0; color: #005b96; }
+    .calendar-nav button { background: linear-gradient(90deg, #4da6ff, #0073e6); border: none; color: white; padding: 8px 15px; margin: 0 5px; border-radius: 6px; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
+    .calendar-nav button:hover { background: linear-gradient(90deg, #0073e6, #004d99); transform: scale(1.05); }
+    .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .day, .day-name { background: rgba(255,255,255,0.9); padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-weight: bold; }
+    .day { cursor: pointer; transition: all 0.3s ease; }
+    .day:hover { background: #4da6ff; color: white; transform: translateY(-3px); }
+    .today { border: 2px solid #0073e6; }
+    #messages { margin-top: 20px; text-align: left; }
+    #messages p { background: rgba(255,255,255,0.95); border-left: 5px solid #0073e6; padding: 10px; border-radius: 8px; margin: 6px 0; }
   </style>
 </head>
 <body>
@@ -144,9 +91,7 @@
         <p>+94 77 123 4567</p>
       </div>
     </div>
-    <div class="footer-bottom">
-      © 2025 Giripahana Website By Silent Vipers | All Rights Reserved
-    </div>
+    <div class="footer-bottom">© 2025 Giripahana Website By Silent Vipers | All Rights Reserved</div>
   </footer>
 
   <!-- JavaScript -->
@@ -159,101 +104,87 @@
     const selectedDateEl = document.getElementById("selected-date");
     const messageInput = document.getElementById("message");
     const messagesDiv = document.getElementById("messages");
-    const savedMessages = {}; // Local storage for now
 
-    const monthNames = [
-      "January","February","March","April","May","June",
-      "July","August","September","October","November","December"
-    ];
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
     function renderCalendar() {
       calendarEl.innerHTML = "";
       monthYearEl.textContent = monthNames[currentMonth] + " " + currentYear;
-
-      // Weekday headers
       for (let d of dayNames) {
         const div = document.createElement("div");
         div.className = "day-name";
         div.textContent = d;
         calendarEl.appendChild(div);
       }
-
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-      // Blank days before 1st
       for (let i = 0; i < firstDay; i++) {
         const div = document.createElement("div");
         div.className = "day";
         div.style.visibility = "hidden";
         calendarEl.appendChild(div);
       }
-
-      // Dates
       for (let d = 1; d <= daysInMonth; d++) {
         const div = document.createElement("div");
         div.className = "day";
         div.textContent = d;
-
         let today = new Date();
         if (d === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
           div.classList.add("today");
         }
-
         div.onclick = () => selectDate(d);
         calendarEl.appendChild(div);
       }
     }
 
-    function prevMonth() {
-      currentMonth--;
-      if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-      }
-      renderCalendar();
-    }
+    function prevMonth() { currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); }
+    function nextMonth() { currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } renderCalendar(); }
+    function selectDate(day) { selectedDate = `${currentYear}-${currentMonth+1}-${day}`; selectedDateEl.textContent = "Selected Date: " + selectedDate; loadMessages(); }
+    renderCalendar();
+  </script>
 
-    function nextMonth() {
-      currentMonth++;
-      if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-      }
-      renderCalendar();
-    }
+  <!-- Firebase Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
-    function selectDate(day) {
-      selectedDate = `${currentYear}-${currentMonth+1}-${day}`;
-      selectedDateEl.textContent = "Selected Date: " + selectedDate;
-      loadMessages();
-    }
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgSuzDCXWBL537o23Cwb0l3BWDIfyND7Q",
+      authDomain: "giripahana-calender.firebaseapp.com",
+      projectId: "giripahana-calender",
+      storageBucket: "giripahana-calender.firebasestorage.app",
+      messagingSenderId: "807294583980",
+      appId: "1:807294583980:web:5ed8c814e8bee540ef4b09"
+    };
 
-    function saveMessage() {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.saveMessage = async function() {
       if (!selectedDate) { alert("Please select a date"); return; }
       const msg = messageInput.value.trim();
       if (!msg) return;
-      if (!savedMessages[selectedDate]) savedMessages[selectedDate] = [];
-      savedMessages[selectedDate].push(msg);
+      await addDoc(collection(db, "events"), { date: selectedDate, message: msg, timestamp: new Date() });
       messageInput.value = "";
-      loadMessages();
     }
 
-    function loadMessages() {
+    window.loadMessages = function() {
       messagesDiv.innerHTML = "<h3>Messages for " + selectedDate + ":</h3>";
-      if (savedMessages[selectedDate]) {
-        savedMessages[selectedDate].forEach(m => {
-          const p = document.createElement("p");
-          p.textContent = "📝 " + m;
-          messagesDiv.appendChild(p);
-        });
-      } else {
-        messagesDiv.innerHTML += "<p>No messages yet.</p>";
-      }
+      const q = query(collection(db, "events"), where("date", "==", selectedDate), orderBy("timestamp", "asc"));
+      onSnapshot(q, (snapshot) => {
+        messagesDiv.innerHTML = "<h3>Messages for " + selectedDate + ":</h3>";
+        if (snapshot.empty) {
+          messagesDiv.innerHTML += "<p>No messages yet.</p>";
+        } else {
+          snapshot.forEach(doc => {
+            const p = document.createElement("p");
+            p.textContent = "📝 " + doc.data().message;
+            messagesDiv.appendChild(p);
+          });
+        }
+      });
     }
-
-    renderCalendar();
   </script>
 </body>
 </html>
