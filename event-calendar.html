@@ -1,38 +1,161 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Event Calendar - Giripahana.lk</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Event Calendar</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+  <style>
+    /* Extra Calendar Styling (works with your CSS theme) */
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      max-width: 700px;
+      margin: 20px auto;
+    }
+    .day {
+      background: rgba(255,255,255,0.85);
+      padding: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      font-weight: bold;
+    }
+    .day:hover {
+      background: #4da6ff;
+      color: white;
+      transform: translateY(-3px);
+    }
+    #messages {
+      margin-top: 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #messages p {
+      background: rgba(255, 255, 255, 0.9);
+      border-left: 5px solid #0073e6;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 6px 0;
+    }
+  </style>
 </head>
 <body>
-
-<header>
-    <img src="12.png" class="logo">
+  <!-- Header -->
+  <header>
+    <img src="logo.png" class="logo" alt="Logo">
     <div class="header-text">
-        <h1>Giripahana.lk</h1>
-        <p>ඔබේ දැනුමේ මාවත</p>
+      <h1>📅 Event Calendar</h1>
+      <p>Click a date, leave a message, share with everyone</p>
     </div>
-</header>
+  </header>
 
-<nav>
-    <a href="index.html">Home</a>
-    <a href="marksheet.html">Mark Sheet</a>
-    <a href="assignment.html">Assignment</a>
-    <a href="timetable.html">Timetable</a>
-    <a href="notifications.html">Notifications</a>
-    <a href="contact.html">Contact Us</a>
-	<a href="logout.html">Logout</a>
-</nav>
+  <!-- Navigation -->
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Calendar</a>
+    <a href="#">About</a>
+  </nav>
 
-<main>
-    <center><h1>Event Calendar</h1></center>
-    <p>ඉස්කෝලයේ ඉදිරිපත් කාලසටහන මෙහි දැක්වෙනු ඇත.</p>
-</main>
+  <!-- Main Content -->
+  <main>
+    <h2 class="page-title">This Month's Calendar</h2>
+    <div id="calendar" class="calendar card"></div>
 
-<footer>
-    <p>© 2025 Giripahana Website By Silent Vipers | All Rights Reserved</p>
-</footer>
+    <div class="card">
+      <h3 id="selected-date">Select a date</h3>
+      <form onsubmit="saveMessage(); return false;">
+        <textarea id="message" placeholder="Write your event message..."></textarea>
+        <button type="submit">Save Message</button>
+      </form>
+    </div>
 
+    <div id="messages" class="card"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-section">
+        <h2>Contact</h2>
+        <p>Email: info@example.com</p>
+      </div>
+      <div class="footer-section">
+        <h2>Follow Us</h2>
+        <a href="#">Facebook</a> | <a href="#">Twitter</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 Event Calendar</div>
+  </footer>
+
+  <script>
+    // 🔥 Firebase Setup (replace with your Firebase config)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const calendar = document.getElementById("calendar");
+    const selectedDateElem = document.getElementById("selected-date");
+    const messageInput = document.getElementById("message");
+    const messagesDiv = document.getElementById("messages");
+    let selectedDate = null;
+
+    // Generate current month calendar
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const div = document.createElement("div");
+      div.className = "day";
+      div.textContent = d;
+      div.onclick = () => selectDate(d);
+      calendar.appendChild(div);
+    }
+
+    function selectDate(day) {
+      selectedDate = `${year}-${month+1}-${day}`;
+      selectedDateElem.textContent = "Selected Date: " + selectedDate;
+      loadMessages();
+    }
+
+    function saveMessage() {
+      if (!selectedDate) { alert("Please select a date"); return; }
+      const msg = messageInput.value.trim();
+      if (!msg) return;
+      db.ref("calendar/" + selectedDate).push(msg);
+      messageInput.value = "";
+      loadMessages();
+    }
+
+    function loadMessages() {
+      if (!selectedDate) return;
+      db.ref("calendar/" + selectedDate).once("value", snapshot => {
+        messagesDiv.innerHTML = "<h3>Messages for " + selectedDate + ":</h3>";
+        if (snapshot.exists()) {
+          snapshot.forEach(child => {
+            const p = document.createElement("p");
+            p.textContent = "📝 " + child.val();
+            messagesDiv.appendChild(p);
+          });
+        } else {
+          messagesDiv.innerHTML += "<p>No messages yet.</p>";
+        }
+      });
+    }
+  </script>
 </body>
 </html>
